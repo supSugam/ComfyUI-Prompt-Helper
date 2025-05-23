@@ -1,4 +1,4 @@
-from .nodes.image_to_prompt import ImageToPrompt
+from nodes import ImageToPrompt
 
 NODE_CLASS_MAPPINGS = {
     "ImageToPrompt": ImageToPrompt,
