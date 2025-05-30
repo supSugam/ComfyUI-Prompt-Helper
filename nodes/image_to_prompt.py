@@ -1,6 +1,6 @@
-from ..models import MODELS_WITH_IMAGE_SUPPORT
-from ..defaults import DEFAULT_SYSTEM_PROMPT_IMG2PROMPT, DEFAULT_INSTRUCTIONS_IMG2PROMPT
-
+from ..models import MODELS_WITH_IMAGE_SUPPORT, MODEL_REGISTRY, ModelKey
+from ..defaults import DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT, DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT
+from ..utils import image_to_temp_file
 class ImageToPrompt:
 
     @classmethod
@@ -13,14 +13,14 @@ class ImageToPrompt:
             "model": (MODELS_WITH_IMAGE_SUPPORT,),
             "system_prompt": (
                 "STRING", {
-                "default": DEFAULT_SYSTEM_PROMPT_IMG2PROMPT,
+                "default": DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
                 "multiline": True,
                 "title": "System Prompt"
                 }
             ),
             "instructions": (
                 "STRING", {
-                "default": DEFAULT_INSTRUCTIONS_IMG2PROMPT,
+                "default": DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT,
                 "multiline": True,
                 "title": "Instructions"
                 }
@@ -36,9 +36,21 @@ class ImageToPrompt:
     CATEGORY = "Prompt Helper"
 
     def generate(self, image, model, system_prompt, instructions, **kwargs):
-        # Handle API key override
-        api_key_override = kwargs.get(f"{model.split('/')[0].upper()} API Key", "").strip()
-        system_prompt = system_prompt.strip() or DEFAULT_SYSTEM_PROMPT_IMG2PROMPT
-        instructions = instructions.strip() or DEFAULT_INSTRUCTIONS_IMG2PROMPT
-        # TODO: use api_key_override if provided
-        return ("Prompt generation not implemented yet.",)
+
+        # Check if the model is registered
+        if model not in MODEL_REGISTRY:
+            raise ValueError(f"Model {model} is not registered.")
+        
+        final_image = image_to_temp_file(image)
+        
+        # Get the model instance from the registry
+        model_instance = MODEL_REGISTRY[model]()
+        # Call the image_to_prompt method with the provided parameters
+        response = model_instance.image_to_prompt(
+            image=final_image,
+            system_instruction=system_prompt,
+            user_instruction=instructions,
+            **kwargs
+        )
+        # Return the response as a tuple
+        return (response,)

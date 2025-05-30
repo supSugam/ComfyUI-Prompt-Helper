@@ -1,9 +1,6 @@
 import os
 import subprocess
 import sys
-import threading
-import time
-import signal
 
 COMFY_DIR = r"C:\Users\sugam\Downloads\ctrlcat\ComfyUI"
 VENV_PYTHON = os.path.join(COMFY_DIR, ".venv", "Scripts", "python.exe")
