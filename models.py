@@ -111,6 +111,27 @@ class Gemini2FlashModel(PromptModelBase):
 
         return response.text
 
+@register_model("google/gemini-2.5-flash-preview")
+class Gemini25FlashPreviewModel(PromptModelBase):
+    def image_to_prompt(self, image, system_instruction=DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
+                        user_instruction=DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT, **kwargs):
+        """
+        Convert an image to a prompt using Gemini 2.5 Flash Preview.
+        """
+
+        from google import genai
+
+        client = genai.Client(api_key="AIzaSyAOmBlMfZVDrTXwbIaxivHzyeMQlVHvytI")
+
+        my_file = client.files.upload(file=image)
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-preview",
+            contents=[my_file, user_instruction],
+        )
+
+        return response.text
+
 ALL_MODELS = list(MODELS.keys())
 MODELS_WITH_IMAGE_SUPPORT = [
     key for key, config in MODELS.items() if config["allow_images"]
