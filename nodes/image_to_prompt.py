@@ -1,4 +1,4 @@
-from ..models import MODELS_WITH_IMAGE_SUPPORT, MODEL_REGISTRY, ModelKey
+from models.registry import MODELS_WITH_IMAGE_SUPPORT, MODELS
 from ..defaults import (
     DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
     DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT,
@@ -47,16 +47,17 @@ class ImageToPrompt:
     FUNCTION = "generate"
     CATEGORY = "Prompt Helper"
 
-    def generate(self, image, model, system_prompt, instructions, **kwargs):
+    def generate(self, image, model, system_prompt, instructions, keep_model_alive=False, **kwargs):
 
         # Check if the model is registered
-        if model not in MODEL_REGISTRY:
+        if model not in MODELS:
             raise ValueError(f"Model {model} is not registered.")
 
         final_image = image_to_temp_file(image)
 
         # Get the model instance from the registry
-        model_instance = MODEL_REGISTRY[model]()
+        model_cls = MODELS[model]["model_class"]
+        model_instance = model_cls(**kwargs)
         # Call the image_to_prompt method with the provided parameters
         response = model_instance.image_to_prompt(
             image=final_image,
