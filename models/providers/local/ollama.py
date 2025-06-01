@@ -1,8 +1,7 @@
 from tqdm import tqdm
 from ollama import Client, ListResponse
-from utils import image_to_base64
-from models.base import PromptModelBase
-from defaults import DEFAULT_OLLAMA_API_HOST, DEFAULT_OLLAMA_TIMEOUT
+from ....models.base import PromptModelBase
+from ....defaults import DEFAULT_OLLAMA_API_HOST, DEFAULT_OLLAMA_TIMEOUT
 
 class OllamaUtil:
     def __init__(self, client: Client):

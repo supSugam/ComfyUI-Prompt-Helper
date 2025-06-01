@@ -1,4 +1,5 @@
-from models.registry import MODELS, ModelBackendEnum
+from ..models.registry import MODELS, ModelBackendEnum
+from ..models.base import PromptModelBase
 
 _model_instance_cache = {}
 def is_ollama_model(model_key):
@@ -6,7 +7,7 @@ def is_ollama_model(model_key):
 
 class ModelManager:
     @classmethod
-    def get_model(cls, model_key, keep_model_alive=False, **kwargs):
+    def get_model(cls, model_key, keep_model_alive=False, **kwargs) -> PromptModelBase:
         if model_key not in MODELS:
             raise ValueError(f"Model {model_key} not registered.")
 

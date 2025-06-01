@@ -1,7 +1,9 @@
 from typing import TypedDict
+
 # from .providers.hosted.openai import GPT4VisionModel
 from .providers.hosted.google import Gemini2FlashModel, Gemini25FlashPreviewModel
 from .providers.local.nlpconnect import NlpconnectVitGpt2Caption
+
 # from .providers.local.fancyfeast import JoyCaptionModel
 # from .providers.local.salesforce import Blip2Model
 from .base import PromptModelBase
@@ -10,14 +12,17 @@ from .base import PromptModelBase
 
 import enum
 
+
 class ModelLocationEnum(enum.Enum):
     LOCAL = "local"
     HOSTED = "hosted"
+
 
 class ModelBackendEnum(enum.Enum):
     TRANSFORMERS = "transformers"
     OLLAMA = "ollama"
     API = "api"
+
 
 class ModelConfig(TypedDict):
     provider: str
@@ -26,6 +31,7 @@ class ModelConfig(TypedDict):
     title: str
     allow_images: bool
     model_class: type
+
 
 MODELS: dict[str, ModelConfig] = {
     # "openai/gpt-4-vision-preview": {
@@ -51,7 +57,6 @@ MODELS: dict[str, ModelConfig] = {
         "title": "Gemini 2.0 Flash",
         "allow_images": True,
         "model_class": Gemini2FlashModel,
-
     },
     "google/gemini-2.5-flash-preview": {
         "provider": "google",
@@ -61,7 +66,7 @@ MODELS: dict[str, ModelConfig] = {
         "allow_images": True,
         "model_class": Gemini25FlashPreviewModel,
     },
-        "nlpconnect/vit-gpt2": {
+    "nlpconnect/vit-gpt2-image-captioning": {
         "provider": "nlpconnect",
         "location": ModelLocationEnum.LOCAL,
         "backend": ModelBackendEnum.TRANSFORMERS,
@@ -90,9 +95,8 @@ MODELS: dict[str, ModelConfig] = {
 }
 
 ALL_MODELS = list(MODELS.keys())
-MODELS_WITH_IMAGE_SUPPORT = [
-    key for key, cfg in MODELS.items() if cfg["allow_images"]
-]
+MODELS_WITH_IMAGE_SUPPORT = [key for key, cfg in MODELS.items() if cfg["allow_images"]]
+
 
 def get_model_instance(model_key: str) -> PromptModelBase:
     config = MODELS.get(model_key)
@@ -106,6 +110,7 @@ def get_model_instance(model_key: str) -> PromptModelBase:
     if "max_tokens" in config:
         kwargs["max_tokens"] = config["max_tokens"]
     return model_class(**kwargs)
+
 
 ALL_MODELS = list(MODELS.keys())
 MODELS_WITH_IMAGE_SUPPORT = [k for k, v in MODELS.items() if v.get("allow_images")]

@@ -1,4 +1,5 @@
-from models.registry import MODELS_WITH_IMAGE_SUPPORT, MODELS
+from ..models.registry import MODELS_WITH_IMAGE_SUPPORT, MODELS
+from ..models.model_manager import ModelManager
 from ..defaults import (
     DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
     DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT,
@@ -38,6 +39,10 @@ class ImageToPrompt:
                     "BOOLEAN",
                     {"default": False, "title": "Keep Model Alive"},
                 ),
+                "cache_prompt": (
+                    "BOOLEAN",
+                    {"default": False, "title": "Cache Prompt"},
+                )
             },
         }
 
@@ -56,9 +61,8 @@ class ImageToPrompt:
         final_image = image_to_temp_file(image)
 
         # Get the model instance from the registry
-        model_cls = MODELS[model]["model_class"]
-        model_instance = model_cls(**kwargs)
-        # Call the image_to_prompt method with the provided parameters
+        model_instance = ModelManager.get_model(model, keep_model_alive)
+
         response = model_instance.image_to_prompt(
             image=final_image,
             system_instruction=system_prompt,

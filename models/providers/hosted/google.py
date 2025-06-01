@@ -1,10 +1,22 @@
-from models.base import PromptModelBase
+from ....models.base import PromptModelBase
 from google import genai
-from defaults import DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT, DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT
+from ....defaults import (
+    DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
+    DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT,
+    DEFAULT_MAX_TOKENS_IMG2PROMPT,
+    DEFAULT_MAX_TOKENS_PROMPT2PROMPT,
+)
+
 
 class Gemini2FlashModel(PromptModelBase):
-    def image_to_prompt(self, image, system_instruction=DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
-                        user_instruction=DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT, **kwargs):
+    def image_to_prompt(
+        self,
+        image,
+        system_instruction=DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
+        user_instruction=DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT,
+        max_tokens=DEFAULT_MAX_TOKENS_IMG2PROMPT,
+        **kwargs
+    ):
         client = genai.Client(api_key="YOUR_API_KEY")
         my_file = client.files.upload(file=image)
         response = client.models.generate_content(
@@ -13,9 +25,16 @@ class Gemini2FlashModel(PromptModelBase):
         )
         return response.text
 
+
 class Gemini25FlashPreviewModel(PromptModelBase):
-    def image_to_prompt(self, image, system_instruction=DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
-                        user_instruction=DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT, **kwargs):
+    def image_to_prompt(
+        self,
+        image,
+        system_instruction=DEFAULT_SYSTEM_INSTRUCTIONS_IMG2PROMPT,
+        user_instruction=DEFAULT_USER_INSTRUCTIONS_IMG2PROMPT,
+        max_tokens=DEFAULT_MAX_TOKENS_PROMPT2PROMPT,
+        **kwargs
+    ):
         client = genai.Client(api_key="YOUR_API_KEY")
         my_file = client.files.upload(file=image)
         response = client.models.generate_content(
